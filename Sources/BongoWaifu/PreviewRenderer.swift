@@ -103,6 +103,7 @@ enum PreviewRenderer {
             switch c.art {
             case .vector(let look): VectorWaifuView(look: look, pose: pose)
             case .sprites(let sprites): SpriteWaifuView(sprites: sprites, pose: pose)
+            case .live2d: Text("Live2D: use --snapshot-live2d").font(.caption)
             }
             EffectsLayer(effect: nil, sleeping: pose.sleeping, tier: pose.tier)
         }

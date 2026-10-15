@@ -80,6 +80,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             ActionItem(level.label, checked: level == model.chattiness) { [model] in model.chattiness = level }
         }))
         items.append(ActionItem("Fun Facts", checked: model.funFacts) { [model] in model.funFacts.toggle() })
+        if case .live2d = model.character.art {
+            items.append(ActionItem("Show Desk", checked: model.showsDesk) { [model] in model.setShowDesk(!model.showsDesk) })
+        }
         items.append(ActionItem("Click-Through (can't drag or pet)", checked: overlay.clickThrough) { [overlay] in
             overlay.clickThrough.toggle()
         })
@@ -95,6 +98,18 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             NSWorkspace.shared.open(CharacterStore.packsDirectory)
         })
         items.append(ActionItem("Reload Characters") { [weak self] in self?.reloadCharacters() })
+        if Live2DCore.isInstalled {
+            let installed = NSMenuItem(title: "Live2D Cubism Core Installed", action: nil, keyEquivalent: "")
+            installed.isEnabled = false
+            items.append(installed)
+        } else {
+            items.append(ActionItem("Install Live2D Cubism Core…") { Live2DCore.promptInstall() })
+        }
+        if let message = Live2DStatus.shared.message {
+            let status = NSMenuItem(title: message, action: nil, keyEquivalent: "")
+            status.isEnabled = false
+            items.append(status)
+        }
 
         items.append(.separator())
         let loginEnabled = SMAppService.mainApp.status == .enabled

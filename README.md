@@ -119,6 +119,60 @@ Any category you leave out falls back to a generic set.
 .build/release/BongoWaifu --export-pack ~/Desktop/MyPack
 ```
 
+## Live2D models
+
+Bongo Waifu can host Live2D Cubism 3/4 models (`.model3.json` + `.moc3`), the format VTube Studio uses. The model sits at the bongo desk and keeps its own physics, blinking and idle motions. On top of that it gets:
+
+- head and eye tracking that follows your cursor
+- glancing at the keyboard while you type
+- lip-sync while she talks
+- mood expressions
+- falling asleep when you're idle
+- a tap motion when you give headpats
+
+**1. Install Live2D Cubism Core (one time).** Live2D's runtime is proprietary and licensed by Live2D Inc., so it isn't bundled. In the menu choose **Install Live2D Cubism Core…**, read the license, and choose *Agree & Download*. It's fetched from `cubism.live2d.com` into `~/Library/Application Support/BongoWaifu/Live2D/`.
+
+**2. Add a model.** Copy the model's folder into the Characters folder (menu → *Open Characters Folder…*), then choose *Reload Characters*. The folder needs the `.model3.json` and everything it references. A `.model3.json` one folder down also works, which is common in VTube Studio exports. `character.json` is optional and adds a name, lines and tuning:
+
+```json
+{
+  "name": "Mao",
+  "accent": "#3B3F8F",
+  "lines": { "greeting": ["Hi!"] },
+  "live2d": {
+    "model": "Mao.model3.json",
+    "zoom": 2.1,
+    "offsetX": 0,
+    "offsetY": -0.02,
+    "expressions": { "happy": "exp_02", "surprised": "exp_07", "sleepy": "exp_03",
+                     "annoyed": "exp_08", "blush": "exp_06", "excited": "exp_04" },
+    "tapMotion": "TapBody",
+    "desk": true,
+    "sleeve": "#2E3270",
+    "hand": "#FFE9DD",
+    "catPaws": false
+  }
+}
+```
+
+All `live2d` keys are optional:
+
+- **`model`**: picks the model when the folder contains several.
+- **`zoom`**: the visible artwork's height as a multiple of the view's height. Leave it out to fit the artwork's width.
+- **`offsetX` / `offsetY`**: nudge the model, as fractions of the view.
+- **`expressions`**: maps moods (`happy`, `excited`, `surprised`, `annoyed`, `sleepy`, `smug`, `blush`) to expression names from the model3.json. Without it, expressions are matched by name (e.g. one containing "smile" is used for `happy`).
+- **`tapMotion`**: the motion group to play on headpats. The default is the first group with "tap" in its name.
+- **`desk`**: set to `false` to hide the desk and paws by default. You can also toggle **Show Desk** in the paw menu; that choice is remembered per character and wins over this setting.
+- **`sleeve`, `hand`, `catPaws`**: style the tapping paws.
+
+To check a pack's framing and expressions without the overlay:
+
+```sh
+.build/release/BongoWaifu --snapshot-live2d ~/path/to/MyModel ~/Desktop/shots
+```
+
+Rendering uses [PixiJS](https://github.com/pixijs/pixijs) and [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display) (both MIT, vendored in `Resources/Live2D`) in a transparent web view. Sample models such as Hiyori and Mao from [CubismWebSamples](https://github.com/Live2D/CubismWebSamples) are good for trying it out; they're under Live2D's Free Material License.
+
 ## Development
 
 ```sh

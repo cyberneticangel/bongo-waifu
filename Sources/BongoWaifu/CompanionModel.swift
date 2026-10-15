@@ -26,6 +26,8 @@ final class CompanionModel: ObservableObject {
     @Published private(set) var tier: SpeedTier = .slow
     @Published private(set) var bubble: Bubble?
     @Published private(set) var effect: ActiveEffect?
+    /// Increments on every headpat (Live2D models play their tap motion).
+    @Published private(set) var petCount = 0
 
     private(set) var stats = TypingStats()
     /// Live2D-style animation state for the vector renderer (head angles, physics, gaze).
@@ -46,6 +48,7 @@ final class CompanionModel: ObservableObject {
         self.character = character
         self.settings = settings
         self.size = settings.size
+        self.deskOverrides = settings.deskOverrides
         self.engine = ReactionEngine(bank: character.bank, chattiness: settings.chattiness,
                                      funFactsEnabled: settings.funFacts, random: random)
     }
@@ -70,6 +73,20 @@ final class CompanionModel: ObservableObject {
     func useDemoPacing(_ pacing: Double, idleAfter: TimeInterval) {
         engine.pacing = pacing
         stats.idleAfter = idleAfter
+    }
+
+    @Published private var deskOverrides: [String: Bool]
+
+    /// Whether the desk, keyboard and paws are drawn. Only Live2D characters can hide it;
+    /// the menu choice wins over the pack's `desk` setting.
+    var showsDesk: Bool {
+        guard case .live2d(let ref) = character.art else { return true }
+        return deskOverrides[character.id] ?? ref.desk
+    }
+
+    func setShowDesk(_ show: Bool) {
+        deskOverrides[character.id] = show
+        settings.deskOverrides = deskOverrides
     }
 
     func setCharacter(_ new: WaifuCharacter) {
@@ -107,6 +124,7 @@ final class CompanionModel: ObservableObject {
     }
 
     func petted() {
+        petCount += 1
         if isSleeping {
             isSleeping = false
         }

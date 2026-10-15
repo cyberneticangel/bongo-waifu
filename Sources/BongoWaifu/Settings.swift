@@ -48,6 +48,12 @@ final class Settings {
         set { defaults.set(newValue, forKey: "clickThrough") }
     }
 
+    /// Per-character "Show Desk" choices from the menu, keyed by character ID.
+    var deskOverrides: [String: Bool] {
+        get { defaults.dictionary(forKey: "deskOverrides") as? [String: Bool] ?? [:] }
+        set { defaults.set(newValue, forKey: "deskOverrides") }
+    }
+
     var windowOrigin: NSPoint? {
         get { defaults.string(forKey: "windowOrigin").map(NSPointFromString) }
         set { defaults.set(newValue.map(NSStringFromPoint), forKey: "windowOrigin") }

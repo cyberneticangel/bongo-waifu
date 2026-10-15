@@ -15,6 +15,9 @@ enum BongoWaifuApp {
                              characterID: rest.dropFirst().first ?? WaifuCharacter.mochi.id)
             return
         }
+        if let flag = args.firstIndex(of: "--snapshot-live2d"), args.count > flag + 2 {
+            exit(Live2DSnapshot.run(pack: args[flag + 1], outputDirectory: args[flag + 2], onScreen: args.contains("--onscreen")))
+        }
         if let flag = args.firstIndex(of: "--export-pack") {
             PreviewRenderer.exportPack(to: args.indices.contains(flag + 1) ? args[flag + 1] : "ExportedPack")
             return

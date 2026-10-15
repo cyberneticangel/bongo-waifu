@@ -50,9 +50,29 @@ struct SpriteSet {
     var expressions: [Mood: NSImage] = [:]
 }
 
+/// A Live2D (Cubism 3/4) model inside a character pack, plus how to frame and drive it.
+struct Live2DModelRef: Equatable {
+    var directory: URL
+    /// The .model3.json, relative to `directory`.
+    var modelPath: String
+    /// Visible artwork height as a multiple of the view height; larger shows less of the body.
+    /// nil fits the artwork's width to the view instead, which frames most models well.
+    var zoom: Double?
+    var offsetX: Double = 0
+    var offsetY: Double = 0
+    /// Mood name → expression name from the model3.json.
+    var expressions: [String: String] = [:]
+    var tapMotion: String?
+    var desk = true
+    var sleeve = Color(hex: 0xFFFFFF)
+    var hand = Color(hex: 0xFFE6D8)
+    var catPaws = false
+}
+
 enum CharacterArt {
     case vector(Appearance)
     case sprites(SpriteSet)
+    case live2d(Live2DModelRef)
 }
 
 struct WaifuCharacter: Identifiable {

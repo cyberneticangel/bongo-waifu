@@ -10,6 +10,7 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp .build/release/BongoWaifu "$APP/Contents/MacOS/"
 cp Resources/Info.plist "$APP/Contents/"
+cp -R Resources/Live2D "$APP/Contents/Resources/Live2D"
 
 # Set SIGN_IDENTITY to a real certificate so macOS keeps the Accessibility grant across rebuilds.
 codesign --force --sign "${SIGN_IDENTITY:--}" --identifier dev.bongowaifu.app "$APP"

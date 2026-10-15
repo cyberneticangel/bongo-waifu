@@ -14,6 +14,7 @@ enum CompanionLayout {
 
 struct CompanionView: View {
     @ObservedObject var model: CompanionModel
+    @ObservedObject private var live2DStatus = Live2DStatus.shared
 
     var body: some View {
         let s = model.size.scale
@@ -48,6 +49,19 @@ struct CompanionView: View {
         switch c.art {
         case .vector(let look): VectorWaifuView(look: look, pose: pose, rig: model.rig)
         case .sprites(let sprites): SpriteWaifuView(sprites: sprites, pose: pose)
+        case .live2d(let ref):
+            ZStack(alignment: .top) {
+                Live2DView(model: ref, pose: pose, rig: model.rig, petCount: model.petCount)
+                if model.showsDesk { BongoDeskView(pose: pose, model: ref, accent: c.accent) }
+                if let message = live2DStatus.message {
+                    Text(message)
+                        .font(.system(size: 10 * model.size.scale, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(6 * model.size.scale)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(.black.opacity(0.65)))
+                        .padding(.top, 30 * model.size.scale)
+                }
+            }
         }
     }
 }
